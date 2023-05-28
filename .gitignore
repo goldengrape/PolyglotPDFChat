@@ -1,6 +1,7 @@
 # secrets data
 secrets.toml 
 prompt.md
+test*.*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
