@@ -1,0 +1,1 @@
+# translation_service：这是一个翻译服务，用于将文本从一种语言翻译为另一种语言。我们将使用 OpenAI 的 GPT 模型作为翻译服务，该模型支持多种语言的翻译。translation_service.translate 方法接收一个文本字符串和一个目标语言代码作为参数，返回一个翻译后的文本字符串。具体的实现可能会涉及到调用 OpenAI 的 API，处理错误，等等。
