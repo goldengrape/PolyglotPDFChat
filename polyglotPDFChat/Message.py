@@ -10,4 +10,5 @@ class Message:
 
     def display(self):
         time = self.timestamp.strftime("%Y-%m-%d %H:%M:%S")
-        return f"{time} - {self.sender}: {self.text}"
+        return f"{time} - {self.sender.name}: {self.text}"
+

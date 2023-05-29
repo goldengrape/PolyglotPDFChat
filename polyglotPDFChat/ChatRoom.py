@@ -1,5 +1,4 @@
 from .Participant import Participant
-from .Message import Message
 
 class ChatRoom:
     def __init__(self, name, speaker):

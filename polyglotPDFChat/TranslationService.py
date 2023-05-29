@@ -8,14 +8,14 @@ from langchain.schema import (
 
 class TranslationService:
     def __init__(self, 
+                stream_box,
+                speak_box,
                 model = "gpt-3.5-turbo" ,
                 temperature = 0.3,
                 voice={"synthesis":"zh-CN-XiaoxiaoNeural","rate":"+50.00%"},
                 stream = True,
                 speak = False,
-                stream_box=None,
                 display_method='markdown',
-                speak_box=None,
                 run_place="local",
                 language="Chinese",
                 ) -> None:

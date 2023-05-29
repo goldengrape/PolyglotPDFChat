@@ -1,7 +1,24 @@
+# `ChatApplication` 是一个聊天应用类，它维护了一个聊天室列表，并可以进行一些操作，例如创建新的聊天室，删除聊天室，显示所有的聊天室，向聊天室发送消息等。以下是其方法的详细描述：
+
+# - `__init__`: 这是类的初始化方法。它没有参数，但会初始化一个字典 `self.rooms`，该字典用于存储所有的聊天室，其中键是聊天室的名称。
+
+# - `create_room(room_name, speaker_name)`: 此方法用于创建一个新的聊天室并将其添加到 `self.rooms` 字典中。它需要两个参数：`room_name`（聊天室的名称）和 `speaker_name`（演讲者的名称）。
+
+# - `delete_room(room_name)`: 此方法用于从 `self.rooms` 字典中删除一个聊天室。它需要一个参数：`room_name`（要删除的聊天室的名称）。
+
+# - `display_rooms()`: 此方法用于打印出所有聊天室的名称。它没有参数。
+
+# - `get_room(room_name)`: 此方法用于返回一个具有给定名称的聊天室。如果该聊天室不存在，则会抛出错误。它需要一个参数：`room_name`（要返回的聊天室的名称）。
+
+# add_listener_to_room(room_name, listener_name): 此方法用于向聊天室添加听众。它需要两个参数：room_name（聊天室的名称）和 listener_name（要添加的听众的名称）。
+
+# remove_listener_from_room(room_name, listener_name): 此方法用于从聊天室中移除听众。它需要两个参数：room_name（聊天室的名称）和 listener_name（要移除的听众的名称）。
+
+# - `send_message_to_room(room_name, sender_name, text)`: 此方法用于向聊天室发送消息。它需要三个参数：`room_name`（聊天室的名称），`sender_name`（发送者的名称）和 `text`（要发送的消息文本）。
+
 from .ChatRoom import ChatRoom
 
 class ChatApplication:
-    # 这个类代表聊天应用。这个应用维护了一个聊天室列表，可以创建新的聊天室，删除聊天室，显示所有的聊天室，以及向聊天室发送消息。
     def __init__(self):
         self.rooms = dict()  # Store all chat rooms in a dictionary with room names as keys.
 
