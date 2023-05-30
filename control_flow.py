@@ -83,6 +83,7 @@ def create_or_join_room(container,chat_app):
             form.success("You joined a Chat room")
         with server_state_lock["room"]:
             server_state["room"]=server_state["chatApp"].rooms[room_name]
+        submitted=False
     return server_state["room"]
 
     

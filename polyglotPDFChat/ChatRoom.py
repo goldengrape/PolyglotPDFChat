@@ -25,20 +25,20 @@ class ChatRoom:
             # raise ValueError("Speaker must be a Participant instance with role 'speaker'.")
         self.name = name
         self.speaker = speaker
-        self.listeners = []
+        self.listeners = set()
         self.speaker_messages = []
         self.listener_messages = []
         self.pdf_files = []
 
     def add_listener(self, listener):
-        if not isinstance(listener, Participant) :
-            print("not a participant",listener)
-            raise TypeError("Speaker must be an instance of Participant.")
-        if listener.role != "listener":
-            print("not a listener",listener)
-            raise ValueError("Listener must be a Participant instance with role 'listener'.")
+        # if not isinstance(listener, Participant) :
+        #     print("not a participant",listener)
+        #     raise TypeError("Speaker must be an instance of Participant.")
+        # if listener.role != "listener":
+        #     print("not a listener",listener)
+        #     raise ValueError("Listener must be a Participant instance with role 'listener'.")
         if listener not in self.listeners:
-            self.listeners.append(listener)
+            self.listeners.add(listener)
 
     def remove_listener(self, listener):
         if listener in self.listeners:

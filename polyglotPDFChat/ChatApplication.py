@@ -58,15 +58,17 @@ class ChatApplication:
             raise ValueError("No room with this name exists.")
         return self.rooms[room_name]
     
-    def add_listener_to_room(self, room_name, listener_name):
+    def add_listener_to_room(self, room_name, listener):
         # Get the room and add the listener.
         room = self.get_room(room_name)
-        room.add_listener(listener_name)
+        if listener not in room.listeners:
+            room.add_listener(listener)
     
     def remove_listener_from_room(self, room_name, listener_name):
         # Get the room and remove the listener.
         room = self.get_room(room_name)
-        room.remove_listener(listener_name)
+        if listener_name not in room.listeners:
+            room.remove_listener(listener_name)
     
     def send_message_to_room(self, room_name, sender_name, text):
         # Get the room and send the message.
