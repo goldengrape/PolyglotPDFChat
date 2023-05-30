@@ -18,17 +18,22 @@ def init_server_state(key,value):
             server_state[key] = value
 
 def init_sessions():
-    print("init_sessions")
+    # server_state
     init_server_state("chatApp",ChatApplication())
-    init_server_state("chat_messages",{})
-    init_server_state("room",None)
+    # init_server_state("chat_messages",{})
+    # init_server_state("room",None)
+
+    # session_state
     init_session_state("user",None)
+    init_session_state("room",None)
+
     
 
 
 def gather_user_info(container, stream_box, speak_box):
     if st.session_state["user"] is not None:
         return st.session_state["user"]
+    
     # User inputs their name and role
     form=container.form("user_info")
     with form:
@@ -61,13 +66,14 @@ def gather_user_info(container, stream_box, speak_box):
         st.session_state["user"]=user
     return st.session_state["user"] 
 
-def create_or_join_room(container,chat_app):
-    form=container.form("Chat Room")
+def create_or_join_room(container):
     if st.session_state["user"] is None:
-        return None 
+        return None
+    
+    form=container.form("Lecture Hall") 
     with form:
         if st.session_state["user"].role== "speaker":
-            room_name = form.text_input("Create a new room", key="room_name")
+            room_name = form.text_input("Create a new Lecture Hall", key="room_name")
         else:
             room_name = form.selectbox(
                 "Join a room", 
@@ -81,20 +87,18 @@ def create_or_join_room(container,chat_app):
                 server_state["chatApp"].create_room(
                     room_name, 
                     st.session_state["user"])  # Ensure this is a Participant instance, not a string.
-            with server_state_lock["chat_messages"]:
-                server_state["chat_messages"][room_name]=[]
-            form.success("You created a new Chat room")
+            # with server_state_lock["chat_messages"]:
+            #     server_state["chat_messages"][room_name]=[]
+            form.success("You created a new Lecture Hall")
         else:
             with server_state_lock["chatApp"]:
                 server_state["chatApp"].add_listener_to_room(
                     room_name, 
                     st.session_state["user"])  # Ensure this is a Participant instance, not a string.
-            form.success("You joined a Chat room")
-        with server_state_lock["room"]:
-            server_state["room"]=server_state["chatApp"].rooms[room_name]
-    return server_state["room"]
-
-    
+            form.success("You joined a Lecture Hall")
+        # with server_state_lock["room"]:
+        st.session_state["room"]=server_state["chatApp"].rooms[room_name]
+    return st.session_state["room"]
 
 def on_message_input(room_name, participant):
     if room_name and participant:
@@ -102,18 +106,30 @@ def on_message_input(room_name, participant):
         if not new_message_text:
             return
 
-        new_message_packet = {
-            "name": participant.name,
-            "text": new_message_text,
-        }
-        with server_state_lock["chat_messages"]:
-            server_state["chat_messages"][room_name].append( new_message_packet)
-            force_rerun_bound_sessions("chat_messages")
+        with server_state_lock["chatApp"]:
+            server_state["chatApp"].rooms[room_name].add_message(
+                st.session_state["user"], 
+                new_message_text)
+        force_rerun_bound_sessions("chatApp")
 
 def input_message(container,room,participant):
-    if room:
-        container.text_input("Message", key="message_input", on_change=on_message_input, args=(room.name, participant))
+    if room is None:
+        return 
+    
+    container.text_input("Message", key="message_input", on_change=on_message_input, args=(room.name, participant))
 
 def output_message(container,room):
-    if room:
-        container.write(server_state["chat_messages"][room.name])
+
+    if st.session_state["room"] is None:
+        return
+    speaker_message=st.session_state["room"].speaker_last_message()
+    listener_message=st.session_state["room"].export_messages(display_role=["listener"])
+    all_message=st.session_state["room"].export_messages()
+    container.markdown(" Speakers said:")
+    container.markdown(speaker_message)
+    container.markdown(" Listeners said:")
+    container.markdown(listener_message)
+    container.markdown(" All said:")
+    container.markdown(all_message)
+
+        # container.write(server_state["chat_messages"][room.name])

@@ -29,7 +29,6 @@ class ChatApplication:
             pass
         else:
             # check the type of speaker
-            print("speaker type: ",type(speaker))
             # Create a new chat room and add it to the dictionary.
             self.rooms[room_name] = ChatRoom(room_name, speaker)
     

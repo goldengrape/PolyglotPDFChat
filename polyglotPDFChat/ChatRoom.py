@@ -28,14 +28,15 @@ class ChatRoom:
         self.listeners = set()
         self.speaker_messages = []
         self.listener_messages = []
+        self.all_messages = []
         self.pdf_files = []
 
     def add_listener(self, listener):
-        # if not isinstance(listener, Participant) :
-        #     print("not a participant",listener)
+        if not isinstance(listener, Participant) :
+            print("not a participant",listener)
         #     raise TypeError("Speaker must be an instance of Participant.")
-        # if listener.role != "listener":
-        #     print("not a listener",listener)
+        if listener.role != "listener":
+            print("not a listener",listener)
         #     raise ValueError("Listener must be a Participant instance with role 'listener'.")
         if listener not in self.listeners:
             self.listeners.add(listener)
@@ -45,17 +46,33 @@ class ChatRoom:
             self.listeners.remove(listener)
 
     def add_message(self, participant, text):
-        if not isinstance(participant, Participant):
-            raise TypeError("Participant must be an instance of Participant.")
+        # if not isinstance(participant, Participant):
+        #     raise TypeError("Participant must be an instance of Participant.")
         message = participant.create_message(text)
         if participant.role == "speaker":
             self.speaker_messages.append(message)
         else:
             self.listener_messages.append(message)
+        self.all_messages.append(message)
 
-    def export_messages(self, is_speaker):
-        messages = self.speaker_messages if is_speaker else self.listener_messages
-        return "\n".join([message.text for message in messages])
+    def export_messages(self, display_role=["speaker","listener"]):
+        if len(display_role)==1:
+            if display_role[0]=="speaker":
+                messages=self.speaker_messages
+            elif display_role[0]=="listener":
+                messages=self.listener_messages
+        elif len(display_role)==2:
+            messages=self.all_messages
+        else:
+            messages=self.all_messages
+        return "\n\n".join([message.text for message in messages])
+    
+    def speaker_last_message(self):
+        if len(self.speaker_messages)>=1:
+            last_message=self.speaker_messages[-1].text
+        else:
+            last_message=""
+        return last_message
 
     def add_pdf(self, pdf_file):
         # Here we assume pdf_file is a valid file path, in reality you may want to check if the file exists
