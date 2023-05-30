@@ -24,6 +24,8 @@ def init_sessions():
 
 
 def gather_user_info(container, stream_box, speak_box):
+    if st.session_state["user"] is not None:
+        return st.session_state["user"]
     # User inputs their name and role
     form=container.form("user_info")
     with form:
@@ -41,22 +43,25 @@ def gather_user_info(container, stream_box, speak_box):
             key="voice")
         speed = form.slider("Voice Speed", min_value=0.5, max_value=2.0, step=0.1, key="speed")
         submitted = form.form_submit_button("Submit")
-
-    user=Participant(
-        name=name, 
-        role=role, 
-        language=language, 
-        voice=voice, 
-        speed=speed, 
-        stream_box=stream_box, 
-        speak_box=speak_box,
-        speak=(role=="listener"),
-        run_place="local")
-    st.session_state["user"]=user
+    if submitted:
+        submitted=False
+        user=Participant(
+            name=name, 
+            role=role, 
+            language=language, 
+            voice=voice, 
+            speed=speed, 
+            stream_box=stream_box, 
+            speak_box=speak_box,
+            speak=(role=="listener"),
+            run_place="local")
+        st.session_state["user"]=user
     return st.session_state["user"] 
 
 def create_or_join_room(container,chat_app):
     form=container.form("Chat Room")
+    if st.session_state["user"] is None:
+        return None 
     with form:
         if st.session_state["user"].role== "speaker":
             room_name = form.text_input("Create a new room", key="room_name")
@@ -67,6 +72,7 @@ def create_or_join_room(container,chat_app):
                 key="room_name")
         submitted = form.form_submit_button("Submit")
     if submitted:
+        submitted=False
         if st.session_state["user"].role== "speaker":
             with server_state_lock["chatApp"]:
                 server_state["chatApp"].create_room(
@@ -83,7 +89,6 @@ def create_or_join_room(container,chat_app):
             form.success("You joined a Chat room")
         with server_state_lock["room"]:
             server_state["room"]=server_state["chatApp"].rooms[room_name]
-        submitted=False
     return server_state["room"]
 
     
