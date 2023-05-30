@@ -70,7 +70,7 @@ class ChatRoom:
     
     def speaker_last_message(self):
         if len(self.speaker_messages)>=1:
-            last_message=self.speaker_messages[-1].text
+            last_message=self.speaker_messages[-1]
         else:
             last_message=""
         return last_message

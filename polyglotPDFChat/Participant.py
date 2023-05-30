@@ -48,7 +48,13 @@ class Participant:
     
     def receive_message(self, message):
         # Translate the message text to the participant's language
-        translated_text = self.translation_service.translate(message.text)
+        # 先判断是否收到的是message实例
+        if not isinstance(message, Message):
+            return message
+        if message.language == self.language:
+            translated_text = message.text
+        else:
+            translated_text = self.translation_service.translate(message.text)
         
         # Create a new message with the translated text.
         translated_message = Message(message.sender, translated_text, self.language)

@@ -49,7 +49,8 @@ def gather_user_info(container, stream_box, speak_box):
             "zh-CN-YunyangNeural",
             ], 
             key="voice")
-        speed = form.slider("Voice Speed", min_value=0.5, max_value=2.0, step=0.1, key="speed")
+        speed_num = form.slider("Voice Speed", min_value=0.5, max_value=2.0, step=0.1, key="speed", value=1.0)
+        speed = f"{(speed_num-1)*100:.2f}%"
         submitted = form.form_submit_button("Submit")
     if submitted:
         submitted=False
@@ -124,12 +125,13 @@ def output_message(container,room):
         return
     speaker_message=st.session_state["room"].speaker_last_message()
     listener_message=st.session_state["room"].export_messages(display_role=["listener"])
-    # all_message=st.session_state["room"].export_messages()
+    translated_message=st.session_state["user"].receive_message(speaker_message)
+    
+    
     container.markdown(" Speakers said:")
-    container.markdown(speaker_message)
+    container.markdown(translated_message)
     container.markdown(" Listeners said:")
     container.markdown(listener_message)
-    # container.markdown(" All said:")
-    # container.markdown(all_message)
 
-        # container.write(server_state["chat_messages"][room.name])
+    
+
