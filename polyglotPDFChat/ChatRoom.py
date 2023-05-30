@@ -65,7 +65,8 @@ class ChatRoom:
             messages=self.all_messages
         else:
             messages=self.all_messages
-        return "\n\n".join([message.text for message in messages])
+        return "\n\n".join([message.display() for message in messages])
+        # return messages
     
     def speaker_last_message(self):
         if len(self.speaker_messages)>=1:

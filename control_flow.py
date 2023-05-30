@@ -124,12 +124,12 @@ def output_message(container,room):
         return
     speaker_message=st.session_state["room"].speaker_last_message()
     listener_message=st.session_state["room"].export_messages(display_role=["listener"])
-    all_message=st.session_state["room"].export_messages()
+    # all_message=st.session_state["room"].export_messages()
     container.markdown(" Speakers said:")
     container.markdown(speaker_message)
     container.markdown(" Listeners said:")
     container.markdown(listener_message)
-    container.markdown(" All said:")
-    container.markdown(all_message)
+    # container.markdown(" All said:")
+    # container.markdown(all_message)
 
         # container.write(server_state["chat_messages"][room.name])
