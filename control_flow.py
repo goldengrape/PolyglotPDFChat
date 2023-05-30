@@ -2,7 +2,10 @@ import streamlit as st
 from polyglotPDFChat import (
     Participant,ChatApplication,
     )
-from streamlit_server_state import server_state, server_state_lock
+from streamlit_server_state import (
+    server_state, server_state_lock,
+    force_rerun_bound_sessions,
+)
 
 
 def init_session_state(key,value):
@@ -105,6 +108,7 @@ def on_message_input(room_name, participant):
         }
         with server_state_lock["chat_messages"]:
             server_state["chat_messages"][room_name].append( new_message_packet)
+            force_rerun_bound_sessions("chat_messages")
 
 def input_message(container,room,participant):
     if room:

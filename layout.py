@@ -1,10 +1,13 @@
 import streamlit as st
+from streamlit_server_state import server_state
 
 def draw_layout():
     layout={  
         "ai_setting":st.expander("AI Setting"),
-        "user_setting":st.expander("User Setting",expanded=True),
-        "room_setting":st.expander("Room Setting"),
+        "user_setting":st.expander("User Setting",
+                    expanded=(st.session_state["user"] is None)),
+        "room_setting":st.expander("Room Setting",
+                    expanded=(server_state["room"] is None)),
         "PDF_display":st.empty(),
         "PDF_play_control":st.empty(),
         "message_input":st.empty(),
