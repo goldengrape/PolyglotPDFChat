@@ -1,7 +1,24 @@
+# 这是 `Participant` 类的方法概述：
+
+# - `__init__(self, name, role, language, voice, speed, stream_box, speak_box, speak=True, run_place="local")`: 构造方法。它需要以下参数：
+
+#   - `name`: 参与者的名字。
+#   - `role`: 参与者的角色，可以是 "speaker" 或 "listener"。
+#   - `language`: 参与者的语言。
+#   - `voice`: 参与者的语音设置。
+#   - `speed`: 语音的速度。
+#   - `stream_box`: 用于接收实时翻译结果的窗口。
+#   - `speak_box`: 用于接收朗读结果的窗口。
+#   - `speak`: 一个布尔值，表示是否需要朗读翻译结果。
+#   - `run_place`: 表示运行翻译服务的地点，可以是 "local" 或 "cloud"。
+
+# - `create_message(self, text)`: 这个方法用于创建一个新的 `Message` 实例。它需要一个参数：`text`（消息的文本）。
+
+# - `receive_message(self, message)`: 这个方法用于接收一个 `Message` 实例。首先，它会把消息的文本翻译成参与者的语言，然后用翻译后的文本创建一个新的 `Message` 实例，并返回这个实例。
+from typing import Any
 from .Message import Message
 from .TranslationService import TranslationService
 class Participant:
-    # 这个类代表聊天室中的一个参与者，可以是主讲人或听众。每个参与者都有一个昵称和角色（主讲人或听众），以及他们所使用的语言和语音的偏好。参与者可以发送消息到聊天室，也可以播放语音。
     def __init__(self, name, role, language, voice, speed,
                 stream_box,
                 speak_box,
@@ -37,3 +54,6 @@ class Participant:
         translated_message = Message(message.sender, translated_text, self.language)
         
         return translated_message
+    
+    def __repr__(self):
+        return f"""{self.name} as {self.role} in {self.language}"""

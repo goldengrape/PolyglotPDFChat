@@ -1,7 +1,12 @@
+# 这是 `Message` 类的方法概述：
+
+# - `__init__(self, sender, text, language)`: 构造方法。它需要三个参数：`sender`（消息的发送者，必须是一个 `Participant` 实例），`text`（消息的文本），以及 `language`（消息的语言）。
+
+# - `display(self)`: 此方法用于显示消息。它将返回一个字符串，该字符串包含了消息的发送时间、发送者的名字，以及消息的文本。
+
 from datetime import datetime
 
 class Message:
-    # 这个类代表聊天室中的一条消息。每条消息都有一个发送者（参与者），消息文本，发送时间，以及消息的语言。可以通过 display() 方法来显示消息。该方法也负责将消息文本翻译成参与者所使用的语言，并通过 TTS_service 转化为语音。
     def __init__(self, sender, text, language):
         self.sender = sender
         self.text = text

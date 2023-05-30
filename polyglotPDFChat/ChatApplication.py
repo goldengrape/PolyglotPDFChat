@@ -2,7 +2,7 @@
 
 # - `__init__`: 这是类的初始化方法。它没有参数，但会初始化一个字典 `self.rooms`，该字典用于存储所有的聊天室，其中键是聊天室的名称。
 
-# - `create_room(room_name, speaker_name)`: 此方法用于创建一个新的聊天室并将其添加到 `self.rooms` 字典中。它需要两个参数：`room_name`（聊天室的名称）和 `speaker_name`（演讲者的名称）。
+# - `create_room(room_name, speaker)`: 此方法用于创建一个新的聊天室并将其添加到 `self.rooms` 字典中。它需要两个参数：`room_name`（聊天室的名称）和 `speaker`（演讲者）。
 
 # - `delete_room(room_name)`: 此方法用于从 `self.rooms` 字典中删除一个聊天室。它需要一个参数：`room_name`（要删除的聊天室的名称）。
 
@@ -22,12 +22,16 @@ class ChatApplication:
     def __init__(self):
         self.rooms = dict()  # Store all chat rooms in a dictionary with room names as keys.
 
-    def create_room(self, room_name, speaker_name):
+    def create_room(self, room_name, speaker):
         # Check if the room already exists.
         if room_name in self.rooms:
-            raise ValueError("A room with this name already exists.")
-        # Create a new chat room and add it to the dictionary.
-        self.rooms[room_name] = ChatRoom(room_name, speaker_name)
+            # raise ValueError("A room with this name already exists.")
+            pass
+        else:
+            # check the type of speaker
+            print("speaker type: ",type(speaker))
+            # Create a new chat room and add it to the dictionary.
+            self.rooms[room_name] = ChatRoom(room_name, speaker)
     
     def delete_room(self, room_name):
         # Check if the room exists.
@@ -36,10 +40,16 @@ class ChatApplication:
         # Delete the room from the dictionary.
         del self.rooms[room_name]
     
+    # def display_rooms(self):
+    #     # Print all room names.
+    #     for room_name in self.rooms:
+    #         print(room_name)
     def display_rooms(self):
-        # Print all room names.
-        for room_name in self.rooms:
-            print(room_name)
+        if len(self.rooms) > 0:
+            return list(self.rooms.keys())
+        else:
+            return []
+
     
     def get_room(self, room_name):
         # Return the chat room with the given name.

@@ -1,3 +1,9 @@
+# `TranslationService` 类的主要方法概述如下：
+
+# - `__init__(self, stream_box, speak_box, model, temperature, voice, stream, speak, display_method, run_place, language)`: 初始化翻译服务实例。其中，`stream_box` 和 `speak_box` 是用于显示和发音翻译结果的窗口；`model` 是选择的 OpenAI 模型；`temperature` 控制模型生成的随机性；`voice` 包含语音合成的相关信息；`stream` 和 `speak` 决定是否流式显示和发音翻译结果；`display_method` 指定显示方式；`run_place` 决定运行位置；`language` 是目标语言。
+
+# - `translate(self, text, language)`: 将 `text` 翻译成指定的 `language`。
+
 from langchain.chat_models import ChatOpenAI
 from .StreamHandler import StreamDisplayHandler, StreamSpeakHandler
 from langchain.schema import (

@@ -1,3 +1,22 @@
+# `StreamDisplayHandler` 类的主要方法概述如下：
+
+# - `__init__(self, container, initial_text="", display_method='markdown')`: 初始化流式显示处理器实例。其中，`container` 是显示翻译结果的窗口；`initial_text` 是初始显示的文本；`display_method` 指定显示方式。
+
+# - `on_llm_new_token(self, token, **kwargs)`: 在每次接收到新的翻译结果片段时，将其添加到显示文本中，并更新显示窗口。
+
+# - `on_llm_end(self, response, **kwargs)`: 在翻译结束时，清空显示文本。
+
+# `StreamSpeakHandler` 类的主要方法概述如下：
+
+# - `__init__(self, container, run_place="cloud", synthesis="zh-CN-XiaoxiaoNeural", rate="+50.00%")`: 初始化流式发音处理器实例。其中，`container` 是发音翻译结果的窗口；`run_place` 决定运行位置；`synthesis` 和 `rate` 控制语音合成的声音和语速。
+
+# - `on_llm_new_token(self, token, **kwargs)`: 在每次接收到新的翻译结果片段时，如果该片段形成了完整的句子，就将其转化为语音发音。
+
+# - `on_llm_end(self, response, **kwargs)`: 在翻译结束时，清空新句子。
+
+# - `speak_ssml_async(self, text)`: 使用 SSML 文本异步进行语音合成。
+
+# - `speak_streamlit_cloud(self, text)`: 在 Streamlit Cloud 环境中进行语音合成。
 from langchain.callbacks.base import BaseCallbackHandler
 import azure.cognitiveservices.speech as speechsdk
 import os
