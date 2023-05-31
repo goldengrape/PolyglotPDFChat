@@ -220,6 +220,6 @@ def display_pdf(room, display_box,control_box):
             force_rerun_bound_sessions("chatApp")
             selected_page=new_selected_page
 
-    pdf_display=server_state["chatApp"].rooms[room.name].display_pdf_page(selected_page,width_ratio=90)
+    pdf_display=server_state["chatApp"].rooms[room.name].display_pdf_page(selected_page,width=700)
     display_box.markdown(pdf_display, unsafe_allow_html=True)
 
