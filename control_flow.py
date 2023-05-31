@@ -28,7 +28,7 @@ def init_sessions():
     init_session_state("user",None)
     init_session_state("room",None)
     init_session_state("speaker_said_that",None)
-    init_session_state("pdf",None)
+    init_session_state("pdf_page_number",0)
 
     if st.session_state["first_run"]:
         init_server_state("chatApp",ChatApplication())
@@ -166,26 +166,35 @@ def output_message(container,room):
     container.markdown(listener_message)
 
 def upload_pdf(container,room):
+    if st.session_state["room"] is None:
+        return
     if st.session_state["user"] is None:
         return
     if st.session_state["user"].role != "speaker":
         return
-    if st.session_state["pdf"] is not None:
-        return
+    if server_state["chatApp"].rooms[room.name].have_pdf:
+        return  
     container.markdown("Upload a PDF file")
-    uploaded_file = container.file_uploader("Choose a file", type="pdf",key="pdf")
+    uploaded_file = container.file_uploader("Choose a file", type="pdf")
     if uploaded_file is not None:
         file_bytes = uploaded_file.read() 
         with server_state_lock["chatApp"]:
-            server_state["chatApp"].rooms[room.name].add_pdf(file_bytes)
+            pdf_page_number=server_state["chatApp"].rooms[room.name].add_pdf(file_bytes)
+            st.session_state["pdf_page_number"]=pdf_page_number
+        force_rerun_bound_sessions("chatApp")
     container.success("PDF uploaded")
     
 
 def display_pdf(room, display_box, control_box):
-    if st.session_state["pdf"] is None:
+    if st.session_state["room"] is None:
         return
-    # num_pages=server_state["chatApp"].rooms[room.name].pdf_page_number
-    num_pages=30
+    if st.session_state["user"] is None:
+        return
+    
+    if server_state["chatApp"].rooms[room.name].have_pdf is False:
+        return
+    num_pages=server_state["chatApp"].rooms[room.name].pdf_page_number
+    # num_pages=st.session_state["pdf_page_number"]
     selected_page = control_box.slider('Select page number', 1, num_pages, 1)
     Previous_button=control_box.button('←')
     Next_button=control_box.button('→')

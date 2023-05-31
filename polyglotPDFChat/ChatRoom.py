@@ -32,6 +32,7 @@ class ChatRoom:
         self.listener_messages = []
         self.all_messages = []
         self.pdf_pages = []
+        self.have_pdf = False
 
     def add_listener(self, listener):
         if not isinstance(listener, Participant) :
@@ -95,6 +96,8 @@ class ChatRoom:
     def add_pdf(self, file_bytes):
         self.pdf_pages, self.page_ratio_list = self.pdf_to_base64_list_and_ratios(file_bytes)
         self._pdf_page_number = len(self.pdf_pages)
+        self.have_pdf = True
+        return self._pdf_page_number
     
     @property
     def pdf_page_number(self):
