@@ -6,6 +6,7 @@ from streamlit_server_state import (
     server_state, server_state_lock,
     force_rerun_bound_sessions,
 )
+import os 
 
 
 def init_session_state(key,value):
@@ -141,6 +142,31 @@ def output_message(container,room):
     container.markdown(translated_message)
     container.markdown(" Listeners said:")
     container.markdown(listener_message)
+
+
+def ai_setting(c):
+    if st.secrets.get("openai_api_key") and st.secrets.get("speech_key") and st.secrets.get("speech_region"):
+        os.environ["OPENAI_API_KEY"] = st.secrets.get("openai_api_key")
+        os.environ['SPEECH_KEY'] = st.secrets.get("speech_key")
+        os.environ['SPEECH_REGION'] = st.secrets.get("speech_region")
+        return 
+    if os.environ["OPENAI_API_KEY"] and os.environ['SPEECH_KEY'] and os.environ['SPEECH_REGION']:
+        return
+
+    form=c.form("AI Setting")
+    with form:
+        openai_key = form.text_input("OpenAI API Key",     
+                value="", type="password")
+        speech_key=form.text_input("Azure Speech Key", 
+                value="",  type="password")
+        speech_region=form.text_input("Azure Speech Region",
+                value="westus")
+        submitted = form.form_submit_button("Submit")
+    if submitted:
+        os.environ["OPENAI_API_KEY"] = openai_key
+        os.environ['SPEECH_KEY']=speech_key
+        os.environ['SPEECH_REGION']=speech_region
+
 
     
 
