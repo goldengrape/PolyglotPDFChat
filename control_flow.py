@@ -33,7 +33,10 @@ def init_sessions():
     if st.session_state["first_run"]:
         init_server_state("chatApp",ChatApplication())
         st.session_state["first_run"]=False
-
+    # reset os evnironment variables 
+    os.environ["OPENAI_API_KEY"]=""
+    os.environ["SPEECH_KEY"]=""
+    os.environ["SPEECH_REGION"]=""
     
 
 
