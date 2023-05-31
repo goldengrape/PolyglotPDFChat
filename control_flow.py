@@ -40,36 +40,7 @@ def init_sessions():
     os.environ["OPENAI_API_KEY"]=st.session_state["openai_key"]
     os.environ["SPEECH_KEY"]=st.session_state["speech_key"]
     os.environ["SPEECH_REGION"]=st.session_state["speech_region"]
-    
-@st.cache_data     
-def init_participant(
-        name,role, 
-            language, 
-            voice, 
-            speed, 
-            stream_box, 
-            speak_box,
-            speak,
-            openai_key,
-            speech_key,
-            speech_region,
-            run_place):
-    user=Participant(
-            name=name, 
-            role=role, 
-            language=language, 
-            voice=voice, 
-            speed=speed, 
-            stream_box=stream_box, 
-            speak_box=speak_box,
-            speak=speak,
-            openai_key=openai_key,
-            speech_key=speech_key,
-            speech_region=speech_region,
-            run_place=run_place)
-    return user
 
-# @st.cache_resource
 def gather_user_info(container, stream_box, speak_box):
     if st.session_state["user"] is not None:
         return st.session_state["user"]
@@ -113,7 +84,7 @@ def gather_user_info(container, stream_box, speak_box):
         submitted = form.form_submit_button("Submit")
     if submitted:
         submitted=False
-        user=init_participant(
+        user=Participant(
             name=name, 
             role=role, 
             language=language, 
@@ -160,7 +131,6 @@ def create_or_join_room(container):
                     room_name, 
                     st.session_state["user"])  # Ensure this is a Participant instance, not a string.
             form.success("You joined a Lecture Hall")
-        # with server_state_lock["room"]:
         st.session_state["room"]=server_state["chatApp"].rooms[room_name]
     return st.session_state["room"]
 
@@ -257,8 +227,6 @@ def display_pdf(room, display_box,control_box):
             force_rerun_bound_sessions("chatApp")
             selected_page=new_selected_page
 
-    # pdf_display=server_state["chatApp"].rooms[room.name].display_pdf_page(selected_page,width=700)
-    # display_box.markdown(pdf_display, unsafe_allow_html=True)
     pages=server_state["chatApp"].rooms[room.name].pdf_pages
     display_box.image(pages[selected_page-1],use_column_width=True)
 
