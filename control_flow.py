@@ -37,9 +37,9 @@ def init_sessions():
         init_server_state("chatApp",ChatApplication())
         st.session_state["first_run"]=False
     # reset os evnironment variables 
-    os.environ["OPENAI_API_KEY"]=st.session_state["openai_key"]
-    os.environ["SPEECH_KEY"]=st.session_state["speech_key"]
-    os.environ["SPEECH_REGION"]=st.session_state["speech_region"]
+    os.environ["OPENAI_API_KEY"]=st.session_state.get("openai_key","")
+    os.environ["SPEECH_KEY"]=st.session_state.get("speech_key","")
+    os.environ["SPEECH_REGION"]=st.session_state.get("speech_region","")
 
 def gather_user_info(container, stream_box, speak_box):
     if st.session_state["user"] is not None:
@@ -102,7 +102,7 @@ def gather_user_info(container, stream_box, speak_box):
 
 
 def create_or_join_room(container):
-    if st.session_state["user"] is None:
+    if st.session_state.get("user", None) is None:
         return None
     
     form=container.form("Lecture Hall") 
@@ -121,9 +121,7 @@ def create_or_join_room(container):
             with server_state_lock["chatApp"]:
                 server_state["chatApp"].create_room(
                     room_name, 
-                    st.session_state["user"])  # Ensure this is a Participant instance, not a string.
-            # with server_state_lock["chat_messages"]:
-            #     server_state["chat_messages"][room_name]=[]
+                    st.session_state["user"]) 
             form.success("You created a new Lecture Hall")
         else:
             with server_state_lock["chatApp"]:
@@ -153,8 +151,7 @@ def input_message(container,room,participant):
     container.text_input("Message", key="message_input", on_change=on_message_input, args=(room.name, participant))
 
 def output_message(container,room):
-
-    if st.session_state["room"] is None:
+    if st.session_state.get("room", None) is None:
         return
     speaker_message=st.session_state["room"].speaker_last_message()
     listener_message=st.session_state["room"].export_messages(display_role=["listener"])
@@ -171,9 +168,9 @@ def output_message(container,room):
     container.markdown(listener_message)
 
 def upload_pdf(container,room):
-    if st.session_state["room"] is None:
+    if st.session_state.get("room", None) is None:
         return
-    if st.session_state["user"] is None:
+    if st.session_state.get("user", None) is None:
         return
     if st.session_state["user"].role != "speaker":
         return
@@ -193,19 +190,19 @@ def upload_pdf(container,room):
     
 
 def display_pdf(room, display_box,control_box):
-    if st.session_state["room"] is None:
+    if st.session_state.get("room", None) is None:
         return
-    if st.session_state["user"] is None:
+    if st.session_state.get("user", None) is None:
         return
     
     if server_state["chatApp"].rooms[room.name].have_pdf is False:
         return
-    
-    num_pages=server_state["chatApp"].rooms[room.name].pdf_page_number
-    selected_page = server_state["chatApp"].rooms[room.name].current_page_number
+    num_pages=room.pdf_page_number
+    selected_page = room.current_page_number
     new_selected_page=selected_page
+    pages=room.pdf_pages
 
-    if st.session_state["user"].role == "speaker":
+    if st.session_state.get("user",False) and st.session_state["user"].role == "speaker":
         col_left, col_right = control_box.columns(2)
         previous=col_left.button("◀️",use_container_width=True)
         next=col_right.button("▶️",use_container_width=True)
@@ -227,6 +224,5 @@ def display_pdf(room, display_box,control_box):
             force_rerun_bound_sessions("chatApp")
             selected_page=new_selected_page
 
-    pages=server_state["chatApp"].rooms[room.name].pdf_pages
     display_box.image(pages[selected_page-1],use_column_width=True)
 
