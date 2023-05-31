@@ -150,7 +150,9 @@ def ai_setting(c):
         os.environ['SPEECH_KEY'] = st.secrets.get("speech_key")
         os.environ['SPEECH_REGION'] = st.secrets.get("speech_region")
         return 
-    if os.environ["OPENAI_API_KEY"] and os.environ['SPEECH_KEY'] and os.environ['SPEECH_REGION']:
+    if os.environ.get("OPENAI_API_KEY",False) and \
+        os.environ.get('SPEECH_KEY',False) and \
+        os.environ.get('SPEECH_REGION',False):
         return
 
     form=c.form("AI Setting")
