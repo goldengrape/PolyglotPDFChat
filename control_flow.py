@@ -221,5 +221,6 @@ def display_pdf(room, display_box,control_box):
             selected_page=new_selected_page
 
     pdf_display=server_state["chatApp"].rooms[room.name].display_pdf_page(selected_page,width=700)
-    display_box.markdown(pdf_display, unsafe_allow_html=True)
+    # display_box.markdown(pdf_display, unsafe_allow_html=True)
+    display_box.image(pdf_display,use_column_width=True)
 

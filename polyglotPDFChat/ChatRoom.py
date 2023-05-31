@@ -15,7 +15,8 @@
 from .Participant import Participant
 import base64
 import fitz  # this is pymupdf
-
+import io
+from PIL import Image
 class ChatRoom:
     def __init__(self, name, speaker):
         if not isinstance(speaker, Participant):
@@ -98,17 +99,40 @@ class ChatRoom:
             ratio_list.append(ratio)
         return base64_list, ratio_list
 
-    def display_pdf_page(self, selected_page,width=700):
-        print("selected_page",selected_page)
-        pdf_base64 = self.pdf_pages[selected_page-1]
-        ratio = self.page_ratio_list[selected_page-1]
-        height = width / ratio +20
-        pdf_display = f'<embed src="data:application/pdf;base64,{pdf_base64}" width="{width}px" height="{height}px" type="application/pdf">'
-        return pdf_display
+    def pdf_to_images_and_ratios(self, file_stream):
+        doc = fitz.open(stream=file_stream, filetype='pdf')
+        image_list = []
+        ratio_list = []
+        for page_number in range(doc.page_count):
+            page = doc.load_page(page_number)
+            pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))  # scale up the image resolution
+            image_data = pix.tobytes()
+            img = Image.open(io.BytesIO(image_data))
+            image_list.append(img)
+            ratio = page.rect.width / page.rect.height  # calculate width to height ratio
+            ratio_list.append(ratio)
+        return image_list, ratio_list
+
+    # def display_pdf_page(self, selected_page,width=700):
+    #     print("selected_page",selected_page)
+    #     pdf_base64 = self.pdf_pages[selected_page-1]
+    #     ratio = self.page_ratio_list[selected_page-1]
+    #     height = width / ratio +20
+    #     pdf_display = f'<embed src="data:application/pdf;base64,{pdf_base64}" width="{width}px" height="{height}px" type="application/pdf">'
+    #     return pdf_display
+
+    def display_pdf_page(self, selected_page, width=700):
+        print("selected_page", selected_page)
+        pdf_image = self.pdf_pages[selected_page - 1]
+        # ratio = self.page_ratio_list[selected_page - 1]
+        # height = int(width / ratio)
+        # resized_image = pdf_image.resize((width, height), Image.ANTIALIAS)
+        return pdf_image
     
     
     def add_pdf(self, file_bytes):
-        self.pdf_pages, self.page_ratio_list = self.pdf_to_base64_list_and_ratios(file_bytes)
+        # self.pdf_pages, self.page_ratio_list = self.pdf_to_base64_list_and_ratios(file_bytes)
+        self.pdf_pages, self.page_ratio_list = self.pdf_to_images_and_ratios(file_bytes)
         self._pdf_page_number = len(self.pdf_pages)
         self.have_pdf = True
         return self._pdf_page_number
