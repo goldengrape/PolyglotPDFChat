@@ -41,8 +41,35 @@ def init_sessions():
     os.environ["SPEECH_KEY"]=st.session_state["speech_key"]
     os.environ["SPEECH_REGION"]=st.session_state["speech_region"]
     
+@st.cache_data     
+def init_participant(
+        name,role, 
+            language, 
+            voice, 
+            speed, 
+            stream_box, 
+            speak_box,
+            speak,
+            openai_key,
+            speech_key,
+            speech_region,
+            run_place):
+    user=Participant(
+            name=name, 
+            role=role, 
+            language=language, 
+            voice=voice, 
+            speed=speed, 
+            stream_box=stream_box, 
+            speak_box=speak_box,
+            speak=speak,
+            openai_key=openai_key,
+            speech_key=speech_key,
+            speech_region=speech_region,
+            run_place=run_place)
+    return user
 
-
+@st.cache_data
 def gather_user_info(container, stream_box, speak_box):
     if st.session_state["user"] is not None:
         return st.session_state["user"]
@@ -86,7 +113,7 @@ def gather_user_info(container, stream_box, speak_box):
         submitted = form.form_submit_button("Submit")
     if submitted:
         submitted=False
-        user=Participant(
+        user=init_participant(
             name=name, 
             role=role, 
             language=language, 
@@ -101,6 +128,7 @@ def gather_user_info(container, stream_box, speak_box):
             run_place=run_place)
         st.session_state["user"]=user
     return st.session_state["user"] 
+
 
 def create_or_join_room(container):
     if st.session_state["user"] is None:
