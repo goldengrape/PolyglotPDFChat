@@ -178,10 +178,12 @@ def upload_pdf(container,room):
     uploaded_file = container.file_uploader("Choose a file", type="pdf")
     if uploaded_file is not None:
         file_bytes = uploaded_file.read() 
-        with server_state_lock["chatApp"]:
-            pdf_page_number=server_state["chatApp"].rooms[room.name].add_pdf(file_bytes)
-            st.session_state["pdf_page_number"]=pdf_page_number
-        force_rerun_bound_sessions("chatApp")
+        with st.spinner("Processing..."):
+            with server_state_lock["chatApp"]:
+                pdf_page_number, pdf_pages=server_state["chatApp"].rooms[room.name].add_pdf(file_bytes)
+                st.session_state["pdf_page_number"]=pdf_page_number
+                st.session_state["pdf_pages"]=pdf_pages
+            force_rerun_bound_sessions("chatApp")
     container.success("PDF uploaded")
     
 
@@ -220,7 +222,8 @@ def display_pdf(room, display_box,control_box):
             force_rerun_bound_sessions("chatApp")
             selected_page=new_selected_page
 
-    pdf_display=server_state["chatApp"].rooms[room.name].display_pdf_page(selected_page,width=700)
+    # pdf_display=server_state["chatApp"].rooms[room.name].display_pdf_page(selected_page,width=700)
     # display_box.markdown(pdf_display, unsafe_allow_html=True)
-    display_box.image(pdf_display,use_column_width=True)
+    pages=server_state["chatApp"].rooms[room.name].pdf_pages
+    display_box.image(pages[selected_page-1],use_column_width=True)
 

@@ -105,12 +105,13 @@ class ChatRoom:
         ratio_list = []
         for page_number in range(doc.page_count):
             page = doc.load_page(page_number)
-            pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))  # scale up the image resolution
-            image_data = pix.tobytes()
-            img = Image.open(io.BytesIO(image_data))
+            pix = page.get_pixmap(dpi=300)  # scale up the image resolution
+            img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
             image_list.append(img)
-            ratio = page.rect.width / page.rect.height  # calculate width to height ratio
-            ratio_list.append(ratio)
+
+            
+            # ratio = page.rect.width / page.rect.height  # calculate width to height ratio
+            # ratio_list.append(ratio)
         return image_list, ratio_list
 
     # def display_pdf_page(self, selected_page,width=700):
@@ -135,4 +136,4 @@ class ChatRoom:
         self.pdf_pages, self.page_ratio_list = self.pdf_to_images_and_ratios(file_bytes)
         self._pdf_page_number = len(self.pdf_pages)
         self.have_pdf = True
-        return self._pdf_page_number
+        return self._pdf_page_number, self.pdf_pages
