@@ -28,6 +28,7 @@ def init_sessions():
     init_session_state("user",None)
     init_session_state("room",None)
     init_session_state("speaker_said_that",None)
+    init_session_state("pdf",None)
 
     if st.session_state["first_run"]:
         init_server_state("chatApp",ChatApplication())
@@ -164,32 +165,33 @@ def output_message(container,room):
     container.markdown(" Listeners said:")
     container.markdown(listener_message)
 
-
-# def ai_setting(c):
-#     if st.secrets.get("openai_api_key") and st.secrets.get("speech_key") and st.secrets.get("speech_region"):
-#         os.environ["OPENAI_API_KEY"] = st.secrets.get("openai_api_key")
-#         os.environ['SPEECH_KEY'] = st.secrets.get("speech_key")
-#         os.environ['SPEECH_REGION'] = st.secrets.get("speech_region")
-#         return 
-#     if os.environ.get("OPENAI_API_KEY",False) and \
-#         os.environ.get('SPEECH_KEY',False) and \
-#         os.environ.get('SPEECH_REGION',False):
-#         return
-
-#     form=c.form("AI Setting")
-#     with form:
-#         openai_key = form.text_input("OpenAI API Key",     
-#                 value="", type="password")
-#         speech_key=form.text_input("Azure Speech Key", 
-#                 value="",  type="password")
-#         speech_region=form.text_input("Azure Speech Region",
-#                 value="westus")
-#         submitted = form.form_submit_button("Submit")
-#     if submitted:
-#         os.environ["OPENAI_API_KEY"] = openai_key
-#         os.environ['SPEECH_KEY']=speech_key
-#         os.environ['SPEECH_REGION']=speech_region
-
-
+def upload_pdf(container,room):
+    if st.session_state["user"] is None:
+        return
+    if st.session_state["user"].role != "speaker":
+        return
+    if st.session_state["pdf"] is not None:
+        return
+    container.markdown("Upload a PDF file")
+    uploaded_file = container.file_uploader("Choose a file", type="pdf",key="pdf")
+    if uploaded_file is not None:
+        file_bytes = uploaded_file.read() 
+        with server_state_lock["chatApp"]:
+            server_state["chatApp"].rooms[room.name].add_pdf(file_bytes)
+    container.success("PDF uploaded")
     
 
+def display_pdf(room, display_box, control_box):
+    if st.session_state["pdf"] is None:
+        return
+    # num_pages=server_state["chatApp"].rooms[room.name].pdf_page_number
+    num_pages=30
+    selected_page = control_box.slider('Select page number', 1, num_pages, 1)
+    Previous_button=control_box.button('←')
+    Next_button=control_box.button('→')
+    if Previous_button:
+        selected_page = max(1, selected_page - 1)
+    if Next_button:
+        selected_page = min(num_pages, selected_page + 1) 
+    pdf_display=server_state["chatApp"].rooms[room.name].display_pdf_page(selected_page,width_ratio=90)
+    display_box.markdown(pdf_display, unsafe_allow_html=True)

@@ -10,7 +10,7 @@ def draw_layout():
                     expanded=(st.session_state["room"] is None)),
         "PDF_upload":st.container(),                    
         "PDF_display":st.container(),
-        "PDF_play_control":st.container(),
+        "PDF_control":st.container(),
         "message_input":st.container(),
         "stream_box":st.empty(),
         "speak_box":st.empty(),

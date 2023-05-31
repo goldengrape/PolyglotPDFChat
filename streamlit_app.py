@@ -8,6 +8,8 @@ from control_flow import (
     create_or_join_room,
     input_message,
     output_message,
+    upload_pdf,
+    display_pdf
     )
 
 init_sessions()
@@ -21,6 +23,9 @@ user=gather_user_info(
     layout["speak_box"])
 
 room=create_or_join_room(layout["room_setting"])
+
+upload_pdf(layout["PDF_upload"],room)
+display_pdf(room,layout["PDF_display"],layout["PDF_control"])
 
 input_message(
     layout["message_input"],

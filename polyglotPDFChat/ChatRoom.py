@@ -13,6 +13,8 @@
 # - `add_pdf(self, pdf_file)`: 此方法用于向聊天室添加 PDF 文件。它需要一个参数：`pdf_file`（要添加的 PDF 文件的文件路径）。在实际应用中，您可能需要检查文件是否存在。
 
 from .Participant import Participant
+import base64
+import fitz  # this is pymupdf
 
 class ChatRoom:
     def __init__(self, name, speaker):
@@ -29,7 +31,7 @@ class ChatRoom:
         self.speaker_messages = []
         self.listener_messages = []
         self.all_messages = []
-        self.pdf_files = []
+        self.pdf_pages = []
 
     def add_listener(self, listener):
         if not isinstance(listener, Participant) :
@@ -75,6 +77,32 @@ class ChatRoom:
             last_message=""
         return last_message
 
-    def add_pdf(self, pdf_file):
-        # Here we assume pdf_file is a valid file path, in reality you may want to check if the file exists
-        self.pdf_files.append(pdf_file)
+    def pdf_to_base64_list_and_ratios(self,file_stream):
+        doc = fitz.open(stream=file_stream, filetype='pdf')
+        base64_list = []
+        ratio_list = []
+        for page_number in range(doc.page_count):
+            page = doc.load_page(page_number)
+            pdf_writer = fitz.open()  # create a new PDF
+            pdf_writer.insert_pdf(doc, from_page=page_number, to_page=page_number)
+            pdf_bytes = pdf_writer.write()  # get the bytes of the new PDF
+            pdf_writer.close()
+            base64_list.append(base64.b64encode(pdf_bytes).decode('utf-8'))
+            ratio = page.rect.width / page.rect.height  # calculate width to height ratio
+            ratio_list.append(ratio)
+        return base64_list, ratio_list
+
+    def add_pdf(self, file_bytes):
+        self.pdf_pages, self.page_ratio_list = self.pdf_to_base64_list_and_ratios(file_bytes)
+        self._pdf_page_number = len(self.pdf_pages)
+    
+    @property
+    def pdf_page_number(self):
+        return self._pdf_page_number
+
+    def display_pdf_page(self, selected_page,width_ratio=90):
+        print("selected_page",selected_page)
+        pdf_base64 = self.pdf_pages[selected_page-1]
+        ratio = self.page_ratio_list[selected_page-1]
+        pdf_display = f'<div style="position:relative;width:{width_ratio}%;height:0;padding-bottom:{100/ratio}%;margin:auto;"><iframe src="data:application/pdf;base64,{pdf_base64}" style="position:absolute;width:100%;height:100%;" type="application/pdf"></iframe></div>'
+        return pdf_display
