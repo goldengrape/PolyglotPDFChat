@@ -79,6 +79,10 @@ class ChatRoom:
             last_message=""
         return last_message
 
+    @property
+    def pdf_page_number(self):
+        return self._pdf_page_number
+
     def pdf_to_base64_list_and_ratios(self,file_stream):
         doc = fitz.open(stream=file_stream, filetype='pdf')
         base64_list = []
@@ -94,26 +98,17 @@ class ChatRoom:
             ratio_list.append(ratio)
         return base64_list, ratio_list
 
-    def add_pdf(self, file_bytes):
-        self.pdf_pages, self.page_ratio_list = self.pdf_to_base64_list_and_ratios(file_bytes)
-        self._pdf_page_number = len(self.pdf_pages)
-        self.have_pdf = True
-        return self._pdf_page_number
-    
-    @property
-    def pdf_page_number(self):
-        return self._pdf_page_number
-
     def display_pdf_page(self, selected_page,width=700):
         print("selected_page",selected_page)
         pdf_base64 = self.pdf_pages[selected_page-1]
         ratio = self.page_ratio_list[selected_page-1]
         height = width / ratio +20
-
-        # pdf_display = f'<div style="position:relative;width:{width_ratio}%;height:0;padding-bottom:{100/ratio}%;margin:auto;"><iframe src="data:application/pdf;base64,{pdf_base64}" style="position:absolute;width:100%;height:100%;" type="application/pdf"></iframe></div>'
-        pdf_display = f'<iframe src="data:application/pdf;base64,{pdf_base64}" width="{width}px" height="{height}px" type="application/pdf"></iframe>'
-
-
+        pdf_display = f'<embed src="data:application/pdf;base64,{pdf_base64}" width="{width}px" height="{height}px" type="application/pdf">'
         return pdf_display
     
     
+    def add_pdf(self, file_bytes):
+        self.pdf_pages, self.page_ratio_list = self.pdf_to_base64_list_and_ratios(file_bytes)
+        self._pdf_page_number = len(self.pdf_pages)
+        self.have_pdf = True
+        return self._pdf_page_number
