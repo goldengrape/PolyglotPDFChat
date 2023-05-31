@@ -46,6 +46,8 @@ class StreamDisplayHandler(BaseCallbackHandler):
 class StreamSpeakHandler(BaseCallbackHandler):
     def __init__(self, 
         container,
+        speech_key="",
+        speech_region="westus",
         run_place="cloud",
         synthesis="zh-CN-XiaoxiaoNeural", 
         rate="+50.00%"):
@@ -55,12 +57,14 @@ class StreamSpeakHandler(BaseCallbackHandler):
         # Initialize the speech synthesizer
         self.synthesis=synthesis
         self.rate=rate
+        self.speech_key=speech_key
+        self.speech_region=speech_region
         self.speech_synthesizer = self.settings(synthesis)
 
     def settings(self, synthesis):
         speech_config = speechsdk.SpeechConfig(
-            subscription=os.environ.get('SPEECH_KEY'), 
-            region=os.environ.get('SPEECH_REGION')
+            subscription=self.speech_key,
+            region=self.speech_region,
         )
         audio_output_config = speechsdk.audio.AudioOutputConfig(use_default_speaker=True)
         

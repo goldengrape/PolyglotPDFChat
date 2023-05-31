@@ -23,7 +23,10 @@ class Participant:
                 stream_box,
                 speak_box,
                 speak=True,
-                                 run_place="local"):
+                openai_key="",
+                speech_key="",
+                speech_region="westus",
+                run_place="cloud"):
         if role not in ["speaker", "listener"]:
             raise ValueError("Role must be either 'speaker' or 'listener'.")
         self.name = name
@@ -32,6 +35,9 @@ class Participant:
         self.voice = voice
         self.speed = speed
         self.translation_service = TranslationService(
+            openai_key=openai_key,
+            speech_key=speech_key,
+            speech_region=speech_region,
             stream_box=stream_box,
             speak_box=speak_box,
             model="gpt-3.5-turbo",

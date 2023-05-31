@@ -57,6 +57,24 @@ def gather_user_info(container, stream_box, speak_box):
             key="voice")
         speed_num = form.slider("Voice Speed", min_value=0.5, max_value=2.0, step=0.1, key="speed", value=1.0)
         speed = f"{(speed_num-1)*100:.2f}%"
+
+        if st.secrets.get("openai_api_key",False) and \
+            st.secrets.get("speech_key",False) and \
+            st.secrets.get("speech_region",False) and \
+            st.secrets.get("run_place",False):
+            
+            openai_key = st.secrets["openai_api_key"]
+            speech_key = st.secrets["speech_key"]
+            speech_region = st.secrets["speech_region"]
+            run_place=st.secrets["run_place"]
+        else:
+            openai_key = form.text_input("OpenAI API Key",     
+                    value="", type="password")
+            speech_key=form.text_input("Azure Speech Key", 
+                    value="",  type="password")
+            speech_region=form.text_input("Azure Speech Region",
+                    value="westus")
+            run_place="cloud"
         submitted = form.form_submit_button("Submit")
     if submitted:
         submitted=False
@@ -69,7 +87,10 @@ def gather_user_info(container, stream_box, speak_box):
             stream_box=stream_box, 
             speak_box=speak_box,
             speak=(role=="listener"),
-            run_place="local")
+            openai_key=openai_key,
+            speech_key=speech_key,
+            speech_region=speech_region,
+            run_place=run_place)
         st.session_state["user"]=user
     return st.session_state["user"] 
 

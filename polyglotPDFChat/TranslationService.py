@@ -16,6 +16,9 @@ class TranslationService:
     def __init__(self, 
                 stream_box,
                 speak_box,
+                openai_key="",
+                speech_key="",
+                speech_region="westus",
                 model = "gpt-3.5-turbo" ,
                 temperature = 0.3,
                 voice={"synthesis":"zh-CN-XiaoxiaoNeural","rate":"+50.00%"},
@@ -30,6 +33,8 @@ class TranslationService:
         stream_display_handler = StreamDisplayHandler(
             stream_box, display_method=display_method)
         stream_speak_handler = StreamSpeakHandler(
+            speech_key=speech_key,
+            speech_region=speech_region,
             container=speak_box,
             run_place=run_place,
             synthesis=self.voice["synthesis"],
@@ -40,6 +45,7 @@ class TranslationService:
             callbacks=[stream_display_handler]
 
         self.llm = ChatOpenAI(
+            openai_api_key=openai_key,
                     model=model,
                     temperature=temperature,
                     streaming=stream,
