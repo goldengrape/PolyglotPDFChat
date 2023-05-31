@@ -199,18 +199,21 @@ def display_pdf(room, display_box,control_box):
     new_selected_page=selected_page
 
     if st.session_state["user"].role == "speaker":
+        col_left, col_right = control_box.columns(2)
+        previous=col_left.button("◀️",use_container_width=True)
+        next=col_right.button("▶️",use_container_width=True)
+        
         new_selected_page=control_box.slider(
             "Select page", 
             1, 
             server_state["chatApp"].rooms[room.name].pdf_page_number, 
             selected_page)
-        previous=control_box.button("Previous page")
-        next=control_box.button("Next page")
+        
         if previous:
             new_selected_page= max(1, new_selected_page - 1)
         if next:
             new_selected_page=min(num_pages, new_selected_page + 1)
-            
+
         if selected_page != new_selected_page:
             with server_state_lock["chatApp"]:
                 server_state["chatApp"].rooms[room.name].current_page_number=new_selected_page
