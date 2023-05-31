@@ -9,7 +9,8 @@ from control_flow import (
     input_message,
     output_message,
     upload_pdf,
-    display_pdf
+    display_pdf,
+    # control_pdf,
     )
 
 init_sessions()
@@ -26,6 +27,7 @@ room=create_or_join_room(layout["room_setting"])
 
 upload_pdf(layout["PDF_upload"],room)
 display_pdf(room,layout["PDF_display"],layout["PDF_control"])
+# control_pdf(room,layout["PDF_control"])
 
 input_message(
     layout["message_input"],

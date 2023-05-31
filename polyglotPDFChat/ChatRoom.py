@@ -33,6 +33,7 @@ class ChatRoom:
         self.all_messages = []
         self.pdf_pages = []
         self.have_pdf = False
+        self.current_page_number = 1
 
     def add_listener(self, listener):
         if not isinstance(listener, Participant) :
@@ -109,3 +110,5 @@ class ChatRoom:
         ratio = self.page_ratio_list[selected_page-1]
         pdf_display = f'<div style="position:relative;width:{width_ratio}%;height:0;padding-bottom:{100/ratio}%;margin:auto;"><iframe src="data:application/pdf;base64,{pdf_base64}" style="position:absolute;width:100%;height:100%;" type="application/pdf"></iframe></div>'
         return pdf_display
+    
+    

@@ -185,7 +185,7 @@ def upload_pdf(container,room):
     container.success("PDF uploaded")
     
 
-def display_pdf(room, display_box, control_box):
+def display_pdf(room, display_box,control_box):
     if st.session_state["room"] is None:
         return
     if st.session_state["user"] is None:
@@ -193,14 +193,30 @@ def display_pdf(room, display_box, control_box):
     
     if server_state["chatApp"].rooms[room.name].have_pdf is False:
         return
+    
     num_pages=server_state["chatApp"].rooms[room.name].pdf_page_number
-    # num_pages=st.session_state["pdf_page_number"]
-    selected_page = control_box.slider('Select page number', 1, num_pages, 1)
-    Previous_button=control_box.button('←')
-    Next_button=control_box.button('→')
-    if Previous_button:
-        selected_page = max(1, selected_page - 1)
-    if Next_button:
-        selected_page = min(num_pages, selected_page + 1) 
+    selected_page = server_state["chatApp"].rooms[room.name].current_page_number
+    new_selected_page=selected_page
+
+    if st.session_state["user"].role == "speaker":
+        new_selected_page=control_box.slider(
+            "Select page", 
+            1, 
+            server_state["chatApp"].rooms[room.name].pdf_page_number, 
+            selected_page)
+        previous=control_box.button("Previous page")
+        next=control_box.button("Next page")
+        if previous:
+            new_selected_page= max(1, new_selected_page - 1)
+        if next:
+            new_selected_page=min(num_pages, new_selected_page + 1)
+            
+        if selected_page != new_selected_page:
+            with server_state_lock["chatApp"]:
+                server_state["chatApp"].rooms[room.name].current_page_number=new_selected_page
+            force_rerun_bound_sessions("chatApp")
+            selected_page=new_selected_page
+
     pdf_display=server_state["chatApp"].rooms[room.name].display_pdf_page(selected_page,width_ratio=90)
     display_box.markdown(pdf_display, unsafe_allow_html=True)
+
