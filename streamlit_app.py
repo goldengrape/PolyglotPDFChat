@@ -13,7 +13,7 @@ from control_flow import (
 init_sessions()
 layout=draw_layout()
 
-ai_setting(layout["ai_setting"])
+# ai_setting(layout["ai_setting"])
 
 user=gather_user_info(
     layout["user_setting"],

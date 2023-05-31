@@ -62,7 +62,7 @@ def gather_user_info(container, stream_box, speak_box):
             st.secrets.get("speech_key",False) and \
             st.secrets.get("speech_region",False) and \
             st.secrets.get("run_place",False):
-            
+
             openai_key = st.secrets["openai_api_key"]
             speech_key = st.secrets["speech_key"]
             speech_region = st.secrets["speech_region"]
@@ -165,30 +165,30 @@ def output_message(container,room):
     container.markdown(listener_message)
 
 
-def ai_setting(c):
-    if st.secrets.get("openai_api_key") and st.secrets.get("speech_key") and st.secrets.get("speech_region"):
-        os.environ["OPENAI_API_KEY"] = st.secrets.get("openai_api_key")
-        os.environ['SPEECH_KEY'] = st.secrets.get("speech_key")
-        os.environ['SPEECH_REGION'] = st.secrets.get("speech_region")
-        return 
-    if os.environ.get("OPENAI_API_KEY",False) and \
-        os.environ.get('SPEECH_KEY',False) and \
-        os.environ.get('SPEECH_REGION',False):
-        return
+# def ai_setting(c):
+#     if st.secrets.get("openai_api_key") and st.secrets.get("speech_key") and st.secrets.get("speech_region"):
+#         os.environ["OPENAI_API_KEY"] = st.secrets.get("openai_api_key")
+#         os.environ['SPEECH_KEY'] = st.secrets.get("speech_key")
+#         os.environ['SPEECH_REGION'] = st.secrets.get("speech_region")
+#         return 
+#     if os.environ.get("OPENAI_API_KEY",False) and \
+#         os.environ.get('SPEECH_KEY',False) and \
+#         os.environ.get('SPEECH_REGION',False):
+#         return
 
-    form=c.form("AI Setting")
-    with form:
-        openai_key = form.text_input("OpenAI API Key",     
-                value="", type="password")
-        speech_key=form.text_input("Azure Speech Key", 
-                value="",  type="password")
-        speech_region=form.text_input("Azure Speech Region",
-                value="westus")
-        submitted = form.form_submit_button("Submit")
-    if submitted:
-        os.environ["OPENAI_API_KEY"] = openai_key
-        os.environ['SPEECH_KEY']=speech_key
-        os.environ['SPEECH_REGION']=speech_region
+#     form=c.form("AI Setting")
+#     with form:
+#         openai_key = form.text_input("OpenAI API Key",     
+#                 value="", type="password")
+#         speech_key=form.text_input("Azure Speech Key", 
+#                 value="",  type="password")
+#         speech_region=form.text_input("Azure Speech Region",
+#                 value="westus")
+#         submitted = form.form_submit_button("Submit")
+#     if submitted:
+#         os.environ["OPENAI_API_KEY"] = openai_key
+#         os.environ['SPEECH_KEY']=speech_key
+#         os.environ['SPEECH_REGION']=speech_region
 
 
     
