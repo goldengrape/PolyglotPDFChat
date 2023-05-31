@@ -69,7 +69,7 @@ def init_participant(
             run_place=run_place)
     return user
 
-@st.cache_data
+# @st.cache_resource
 def gather_user_info(container, stream_box, speak_box):
     if st.session_state["user"] is not None:
         return st.session_state["user"]
