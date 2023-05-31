@@ -29,14 +29,17 @@ def init_sessions():
     init_session_state("room",None)
     init_session_state("speaker_said_that",None)
     init_session_state("pdf_page_number",0)
+    init_session_state("openai_key","")
+    init_session_state("speech_key","")
+    init_session_state("speech_region","")
 
     if st.session_state["first_run"]:
         init_server_state("chatApp",ChatApplication())
         st.session_state["first_run"]=False
     # reset os evnironment variables 
-    os.environ["OPENAI_API_KEY"]=""
-    os.environ["SPEECH_KEY"]=""
-    os.environ["SPEECH_REGION"]=""
+    os.environ["OPENAI_API_KEY"]=st.session_state["openai_key"]
+    os.environ["SPEECH_KEY"]=st.session_state["speech_key"]
+    os.environ["SPEECH_REGION"]=st.session_state["speech_region"]
     
 
 
@@ -73,11 +76,12 @@ def gather_user_info(container, stream_box, speak_box):
             run_place=st.secrets["run_place"]
         else:
             openai_key = form.text_input("OpenAI API Key",     
-                    value="", type="password")
+                    value="", type="password", key="openai_key")
             speech_key=form.text_input("Azure Speech Key", 
-                    value="",  type="password")
+                    value="",  type="password",
+                    key="speech_key")
             speech_region=form.text_input("Azure Speech Region",
-                    value="westus")
+                    value="westus", key="speech_region")
             run_place="cloud"
         submitted = form.form_submit_button("Submit")
     if submitted:
