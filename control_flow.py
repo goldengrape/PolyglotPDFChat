@@ -19,13 +19,18 @@ def init_server_state(key,value):
 
 def init_sessions():
     # server_state
-    init_server_state("chatApp",ChatApplication())
     # init_server_state("chat_messages",{})
     # init_server_state("room",None)
 
     # session_state
+    init_session_state("first_run",True)
     init_session_state("user",None)
     init_session_state("room",None)
+    init_session_state("speaker_said_that",None)
+
+    if st.session_state["first_run"]:
+        init_server_state("chatApp",ChatApplication())
+        st.session_state["first_run"]=False
 
     
 
@@ -125,7 +130,11 @@ def output_message(container,room):
         return
     speaker_message=st.session_state["room"].speaker_last_message()
     listener_message=st.session_state["room"].export_messages(display_role=["listener"])
-    translated_message=st.session_state["user"].receive_message(speaker_message)
+    if speaker_message != st.session_state["speaker_said_that"]:
+        translated_message=st.session_state["user"].receive_message(speaker_message)
+        st.session_state["speaker_said_that"]=speaker_message
+    else:
+        translated_message=st.session_state["speaker_said_that"]
     
     
     container.markdown(" Speakers said:")

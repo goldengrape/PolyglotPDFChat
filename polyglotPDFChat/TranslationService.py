@@ -47,6 +47,7 @@ class TranslationService:
                 )
 
     def translate(self, text, language="Chinese"):
+        content=f"You need tor translates the user message to {language}. the user message is inside tag <user_message>:\n\n<user_message>{text}<user_message>"
         messages = [
             SystemMessage(content=f"You are a helpful assistant that translates the user message to {language}."),
             HumanMessage(content=text)
