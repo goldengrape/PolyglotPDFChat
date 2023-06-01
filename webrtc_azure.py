@@ -18,7 +18,7 @@ class AudioBuffer(io.BufferedIOBase):
 
     def read(self, size=-1):
         data = self.buffer.get()
-        return len(data)
+        return data  # 修改这里，直接返回读取的数据
 
     def flush(self):
         pass
@@ -31,10 +31,11 @@ class MyPullAudioInputStreamCallback(PullAudioInputStreamCallback):
 
     def read(self, size):
         data = self.audio_buffer.read(size)
-        return data
+        return data  # 修改这里，直接返回读取的数据
 
     def close(self):
         pass
+
 
 
 def app_sst(
