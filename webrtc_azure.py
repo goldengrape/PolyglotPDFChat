@@ -18,10 +18,13 @@ class AudioBuffer:
     def readinto(self, buf):
         try:
             data = self.buffer.get(block=False)
-            buf[:len(data)] = data
-            return len(data)
+            data_view = memoryview(data).cast(buf.format, shape=(len(data) // buf.itemsize,))
+            buf[:len(data_view)] = data_view
+            return len(data_view)
         except queue.Empty:
             return 0
+
+
 
 class MyPullAudioInputStreamCallback(PullAudioInputStreamCallback):
     def __init__(self, audio_buffer):
