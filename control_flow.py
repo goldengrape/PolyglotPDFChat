@@ -7,6 +7,7 @@ from streamlit_server_state import (
     force_rerun_bound_sessions,
 )
 import os 
+import openai
 
 
 def init_session_state(key,value):
@@ -38,6 +39,8 @@ def init_sessions():
         st.session_state["first_run"]=False
     # reset os evnironment variables 
     os.environ["OPENAI_API_KEY"]=st.session_state.get("openai_key","")
+    openai.api_key=st.session_state.get("openai_key","")
+    # print("openai.api_key",openai.api_key)
     os.environ["SPEECH_KEY"]=st.session_state.get("speech_key","")
     os.environ["SPEECH_REGION"]=st.session_state.get("speech_region","")
 
