@@ -8,17 +8,20 @@ from azure.cognitiveservices.speech import ResultReason, CancellationReason
 from azure.cognitiveservices.speech.audio import PullAudioInputStreamCallback, PullAudioInputStream
 import queue
 
-
 class AudioBuffer(io.BufferedIOBase):
     def __init__(self):
         self.buffer = queue.Queue()
+        self.data = None
 
     def write(self, data):
         self.buffer.put(data)
 
     def read(self, size=-1):
-        data = self.buffer.get()
-        return data  # 修改这里，直接返回读取的数据
+        self.data = self.buffer.get()
+        return len(self.data)  # 返回读取的字节数
+
+    def get_data(self):
+        return self.data
 
     def flush(self):
         pass
@@ -30,8 +33,8 @@ class MyPullAudioInputStreamCallback(PullAudioInputStreamCallback):
         self.audio_buffer = audio_buffer
 
     def read(self, size):
-        data = self.audio_buffer.read(size)
-        return data  # 修改这里，直接返回读取的数据
+        data = self.audio_buffer.get_data()
+        return data[:size]  # 从 AudioBuffer 的属性中读取数据
 
     def close(self):
         pass
