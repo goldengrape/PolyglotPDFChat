@@ -13,12 +13,14 @@ class AudioBuffer:
         self.buffer = queue.Queue()
 
     def write(self, data):
+        print(f"Writing data to buffer: {data[:10]}")  # print the first 10 elements
         self.buffer.put(data)
 
     def readinto(self, buf):
         try:
             data = self.buffer.get(block=False)
-            data_view = memoryview(data).cast(buf.format, shape=(len(data) // buf.itemsize,))
+            print(f"Reading data from buffer: {data[:10]}")  # print the first 10 elements
+            data_view = memoryview(data).cast(buf.format)
             buf[:len(data_view)] = data_view
             return len(data_view)
         except queue.Empty:
@@ -68,7 +70,10 @@ def app_sst(
             try:
                 audio_frames = webrtc_ctx.audio_receiver.get_frames(timeout=timeout)
                 for audio_frame in audio_frames:
-                    audio_buffer.write(audio_frame.to_ndarray().tobytes())
+                    audio_data = audio_frame.to_ndarray().tobytes()
+                    print(f"Audio data shape: {audio_frame.to_ndarray().shape}")  # print the shape
+                    print(f"Audio data type: {audio_frame.to_ndarray().dtype}")  # print the dtype
+                    audio_buffer.write(audio_data)
                 result = speech_recognizer.recognize_once_async().get()
                 if result.reason == ResultReason.RecognizedSpeech:
                     text_output.write(result.text)
